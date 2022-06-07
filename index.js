@@ -52,12 +52,6 @@ async function run() {
             res.send(loans);
         });
 
-        app.get('/loan/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email };
-            const result = await loanCollection.findOne(query);
-            res.send(result);
-        });
 
         app.post('/loan', async (req, res) => {
             const application = req.body;
@@ -65,6 +59,29 @@ async function run() {
             const result = await loanCollection.insertOne(application);
             res.send(result);
         });
+
+        app.patch('/loan/:id', async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const query = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    status: 'Accepted'
+                }
+            }
+            const updatedLoan = await loanCollection.updateOne(query, updatedDoc);
+            res.send(updatedLoan);
+
+        })
+
+        app.delete('/loan/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: ObjectId(id)
+            }
+            const result = await loanCollection.deleteOne(query);
+            res.send(result);
+        })
 
     }
     finally {
